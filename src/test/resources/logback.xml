@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration  >
+
+    <contextName>taboola_interview</contextName>
+    <!--<jmxConfigurator/>-->
+
+    <appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n
+            </Pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+    </appender>
+
+
+
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="ConsoleAppender"/>
+    </root>
+</configuration>
