@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Created by michael on 5/29/18.
  */
-public class CalculatorMain implements Calculator {
+public class CalculatorMain  {
     
     private static Logger log = LoggerFactory.getLogger(CalculatorMain.class);
 
