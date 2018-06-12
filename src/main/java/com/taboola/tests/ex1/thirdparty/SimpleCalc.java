@@ -1,4 +1,4 @@
-package com.taboola.tests.aaaaa;
+package com.taboola.tests.ex1.thirdparty;
 
 import java.math.BigDecimal;
 import java.util.Scanner;

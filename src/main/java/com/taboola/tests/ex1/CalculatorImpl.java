@@ -1,13 +1,15 @@
-package com.taboola.tests.ex1.operation;
+package com.taboola.tests.ex1;
 
-import com.taboola.tests.aaaaa.SimpleCalc;
-import com.taboola.tests.ex1.Calculator;
-import com.taboola.tests.ex1.VariableValue;
+
+import com.taboola.tests.ex1.thirdparty.SimpleCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +20,7 @@ public class CalculatorImpl implements Calculator {
 
     private Logger log = LoggerFactory.getLogger(CalculatorImpl.class);
 
-    private List<Collection<VariableValue>> intermediateResults = new ArrayList<Collection<VariableValue>>();
+
 
     /**
      * Find operator like i++ , --i , ++j or j--
@@ -39,8 +41,8 @@ public class CalculatorImpl implements Calculator {
     /**
      * Process equation line and returns the state of each variable till now.
      *
-     * @param line of stricted syntax like : k = 2*x + y*y - z++
-     * @return Map of <b><i>variable name ==> Double value</i></b>
+     * @param line of syntax like : k = 2*x + y*y - z++
+     * @return Collection of VariableValue , like { i=5, j=10, k=44 }
      */
     public Collection<VariableValue> processEquationLine(String line) {
         String[] splitValues = line.split("=");
@@ -51,6 +53,7 @@ public class CalculatorImpl implements Calculator {
         String variableName = leftSideOfLine;
 
         // We have here an equation of type i += 6  or j -= j*2
+        // We modify this equation to i = i+6 or j = j - x*2
         if (leftSideOfLine.endsWith("+")) {
             variableName = variableName.substring(0, leftSideOfLine.length() - 1);
             rightSideOfLine = variableName + " +" + rightSideOfLine;
@@ -60,6 +63,7 @@ public class CalculatorImpl implements Calculator {
         }
 
         VariableValue variableValue = new VariableValue(variableName);
+
 
         String lineAfterOperatorResolution = processOperatorInLine(rightSideOfLine);
 
@@ -71,6 +75,8 @@ public class CalculatorImpl implements Calculator {
         log.debug("Final Sum of (" + line + ") = " + finalSum);
         variableValue.setValue(finalSum.doubleValue());
         variableMap.put(variableValue.getName(), variableValue);
+
+        log.debug("Add intermediateResults : " + variableMap.values());
 
         return variableMap.values();
 
@@ -105,7 +111,7 @@ public class CalculatorImpl implements Calculator {
      * Then, replace the different variables by their known values <br/>
      *
      * For ex: <br/>
-     *   <b><i>i++</i></b> + 4*(<b><i>--j</i></b>) <br/>
+     *   <b><i>i++</i></b> + 4* <b><i>--j</i></b> <br/>
      * @param line
      * @return
      */
@@ -133,7 +139,7 @@ public class CalculatorImpl implements Calculator {
     }
 
     /**
-     * Execute the operator instruction <br/>
+     * Execute the operator instruction one o<br/>
      * Like : <br/>
      * <li> i++ (assuming i=3) should return 4 and assign i=4</li>
      * <li> ++i (assuming i=3) should return 3 and assign i=4</li>
@@ -158,20 +164,26 @@ public class CalculatorImpl implements Calculator {
             String result = variable.getValue() + "";
             return result;
         }
-
+        else if(operatorDirective.endsWith("--")) {
+            String variableName = operatorDirective.substring(0, operatorDirective.length()-2);
+            VariableValue variable = variableMap.get(variableName);
+            String result = variable.getValue() + "";
+            variable.setValue(variable.getValue() - 1);
+            return result;
+        }
+        else  if(operatorDirective.startsWith("--")) {
+            String variableName = operatorDirective.substring("++".length());
+            VariableValue variable = variableMap.get(variableName);
+            if(variable == null) {
+                throw new IllegalArgumentException("variableName was not assigned yet. variableName " + variableName);
+            }
+            variable.setValue(variable.getValue() - 1);
+            String result = variable.getValue() + "";
+            return result;
+        }
 
         return operatorDirective;
     }
 
-    public List<Collection<VariableValue>> getIntermediateResult() {
-        return intermediateResults;
-    }
-
-    public Collection<VariableValue> getFinalResult() {
-        if(!intermediateResults.isEmpty())
-            return intermediateResults.get(intermediateResults.size()-1);
-        else
-            return null;
-    }
 
 }

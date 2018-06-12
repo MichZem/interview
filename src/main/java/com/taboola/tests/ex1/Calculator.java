@@ -9,7 +9,5 @@ import java.util.List;
 public interface Calculator {
 
     Collection<VariableValue> processEquationLine(String line);
-    List<Collection<VariableValue>> getIntermediateResult();
-    Collection<VariableValue> getFinalResult();
 
 }

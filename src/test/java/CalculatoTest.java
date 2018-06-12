@@ -1,14 +1,12 @@
 import com.taboola.tests.ex1.Calculator;
-import com.taboola.tests.ex1.CalculatorMain;
+import com.taboola.tests.ex1.CalculatorImpl;
 import com.taboola.tests.ex1.VariableValue;
-import com.taboola.tests.ex1.operation.CalculatorImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Created by michael on 6/3/18.
@@ -69,15 +67,50 @@ public class CalculatoTest {
         Assert.assertTrue("Only one variable is expected : y=35" , result.contains(new VariableValue("y", 35)));
     }
 
+    /**
+     * Run the following equations and ensure we have all the intermediate results as described : <br/>
+     * i=5              ==> i=5 <br/>
+     * j=i++ *3         ==> i=6 j=15 <br/>
+     * k=i++ - 3*j      ==> i=7 j=15 k=-39 <br/>
+     *
+     */
     @Test
-    public void testTaboolaAssigment_1() {
+    public void testIntermediateResult() {
         Calculator calculator = new CalculatorImpl();
         Collection<VariableValue> result = calculator.processEquationLine("i=5");
-        result = calculator.processEquationLine("j=i++ * 3");
-        result = calculator.processEquationLine("k=i++ - 3*j");
+        Assert.assertTrue(result.contains(new VariableValue("i", 5)));
 
+        result = calculator.processEquationLine("j=i++ * 3");
+        Assert.assertTrue(result.contains(new VariableValue("i", 6)));
+        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
+
+        result = calculator.processEquationLine("k=i++ - 3*j");
         Assert.assertTrue(result.contains(new VariableValue("i", 7)));
         Assert.assertTrue(result.contains(new VariableValue("j", 15)));
         Assert.assertTrue(result.contains(new VariableValue("k", -39)));
+    }
+
+
+    /**
+     * Check intermediate results and ensure we use also the minus-minus operator <br/>
+     * i=5              ==> i=5 <br/>
+     * j=i-- *3         ==> i=4 j=15 <br/>
+     * k=--i - 3*j      ==> i=3 j=15 k=-42 <br/>
+     *
+     */
+    @Test
+    public void testMinusMinusOperation() {
+        Calculator calculator = new CalculatorImpl();
+        Collection<VariableValue> result = calculator.processEquationLine("i=5");
+        Assert.assertTrue(result.contains(new VariableValue("i", 5)));
+
+        result = calculator.processEquationLine("j=i-- * 3");
+        Assert.assertTrue(result.contains(new VariableValue("i", 4)));
+        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
+
+        result = calculator.processEquationLine("k=--i - 3*j");
+        Assert.assertTrue(result.contains(new VariableValue("i", 3)));
+        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
+        Assert.assertTrue(result.contains(new VariableValue("k", -42)));
     }
 }
