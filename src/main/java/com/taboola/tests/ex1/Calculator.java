@@ -10,4 +10,6 @@ public interface Calculator {
 
     Collection<VariableValue> processEquationLine(String line);
 
+    String getVariableStatus();
+
 }

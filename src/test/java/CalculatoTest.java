@@ -61,10 +61,13 @@ public class CalculatoTest {
         result = calculator.processEquationLine("i+=y");
 
         Assert.assertEquals("i,j,x,y are expected (4 variables) " , 4, result.size());
-        Assert.assertTrue("Only one variable is expected : i=37" , result.contains(new VariableValue("i", 37)));
-        Assert.assertTrue("Only one variable is expected : j=1" , result.contains(new VariableValue("j", 1)));
-        Assert.assertTrue("Only one variable is expected : x=6" , result.contains(new VariableValue("x", 6)));
-        Assert.assertTrue("Only one variable is expected : y=35" , result.contains(new VariableValue("y", 35)));
+        Assert.assertTrue("i=37" , result.contains(new VariableValue("i", 37)));
+        Assert.assertTrue("j=1" , result.contains(new VariableValue("j", 1)));
+        Assert.assertTrue("expected  x=6" , result.contains(new VariableValue("x", 6)));
+        Assert.assertTrue("expected  y=35" , result.contains(new VariableValue("y", 35)));
+
+        String resultAsStr = calculator.getVariableStatus();
+        log.info(resultAsStr);
     }
 
     /**

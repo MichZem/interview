@@ -83,6 +83,26 @@ public class CalculatorImpl implements Calculator {
     }
 
     /**
+     * Return a textual representation of the variable and their values <br/>
+     * @return
+     */
+    public String getVariableStatus() {
+        StringBuilder builder = new StringBuilder();
+
+        for(String key : variableMap.keySet()) {
+            if(builder.length() == 0) {
+                builder.append("(");
+            }
+            else {
+                builder.append(",");
+            }
+            builder.append(key).append("=").append(variableMap.get(key).getValue());
+        }
+        builder.append(")");
+        return builder.toString();
+    }
+
+    /**
      * Replace all the variable found in line by their current value
      * @param line
      * @return
