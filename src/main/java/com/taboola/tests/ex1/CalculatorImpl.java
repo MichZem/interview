@@ -169,7 +169,7 @@ public class CalculatorImpl implements Calculator {
             String variableName = operatorDirective.substring(0, operatorDirective.length()-2);
             VariableValue variable = variableMap.get(variableName);
             String result = variable.getValue() + "";
-            variable.setValue(variable.getValue() + 1);
+            variable.incrementBy( 1);
             return result;
         }
         else  if(operatorDirective.startsWith("++")) {
@@ -178,7 +178,7 @@ public class CalculatorImpl implements Calculator {
             if(variable == null) {
                 throw new IllegalArgumentException("variableName was not assigned yet. variableName " + variableName);
             }
-            variable.setValue(variable.getValue() + 1);
+            variable.incrementBy(1);
             String result = variable.getValue() + "";
             return result;
         }
@@ -186,7 +186,7 @@ public class CalculatorImpl implements Calculator {
             String variableName = operatorDirective.substring(0, operatorDirective.length()-2);
             VariableValue variable = variableMap.get(variableName);
             String result = variable.getValue() + "";
-            variable.setValue(variable.getValue() - 1);
+            variable.decrementBy(1);
             return result;
         }
         else  if(operatorDirective.startsWith("--")) {
@@ -195,7 +195,7 @@ public class CalculatorImpl implements Calculator {
             if(variable == null) {
                 throw new IllegalArgumentException("variableName was not assigned yet. variableName " + variableName);
             }
-            variable.setValue(variable.getValue() - 1);
+            variable.decrementBy(1);
             String result = variable.getValue() + "";
             return result;
         }
