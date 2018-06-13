@@ -1,3 +1,5 @@
+package com.taboola.tests.ex1;
+
 import com.taboola.tests.ex1.Calculator;
 import com.taboola.tests.ex1.CalculatorImpl;
 import com.taboola.tests.ex1.VariableValue;
