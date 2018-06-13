@@ -1,7 +1,5 @@
 package com.taboola.tests.ex1;
 
-import java.util.HashMap;
-
 /**
  * Created by michael on 5/29/18.
  */

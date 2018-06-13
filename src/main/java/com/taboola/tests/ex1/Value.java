@@ -5,7 +5,6 @@ package com.taboola.tests.ex1;
  */
 public interface Value {
     double getValue();
-
     void setValue(double val);
     void incrementBy(int i);
     void decrementBy(int i);
