@@ -14,6 +14,7 @@ that checks the validity of the Calculator
 
 
 <h1>Exercise 2</h1>
+My comment in the class can be found in this file : <br/>
 <a href="src/main/java/com/taboola/tests/ex2/MyClass.java"> src/main/java/com/taboola/tests/ex2/MyClass.java</a>  
 
 <h1>Exercise 3</h1>
