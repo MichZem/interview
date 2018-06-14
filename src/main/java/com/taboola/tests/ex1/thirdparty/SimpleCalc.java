@@ -15,7 +15,7 @@ public class SimpleCalc {
     public static String welcomeMsg = "SimpleCalc - The simple calculator - v1.11";
     public static String usage = "Usage: SimpleCalc [math expression] (precision). Use only +, -, * and /.";
 
-    // Default Precision Variable
+    // Default Precision VariableImpl
     public static Integer outputPrecision = 10;
 
 
@@ -47,8 +47,9 @@ public class SimpleCalc {
         try {
             return new BigDecimal(num);
         } catch (NumberFormatException e) {
-            fatalError("Invalid number '" + num + "'. Must be a numeric value. Use '.' for decimals.", 2);
-            return BigDecimal.ZERO; // is never called.
+            throw new IllegalArgumentException("Invalid number '" + num + "'. Must be a numeric value. Use '.' for decimals");
+//            fatalError("Invalid number '" + num + "'. Must be a numeric value. Use '.' for decimals.", 2);
+//            return BigDecimal.ZERO; // is never called.
         }
     }
 

@@ -23,7 +23,7 @@ public class CalculatorMain  {
         do {
             log.debug("Please enter your equation line (like i=0  or j = ++i + 4 *5 ");
             line = scanner.nextLine();
-            Collection<VariableValue> result = calculatorMain.processEquationLine(line);
+            Collection<Variable> result = calculatorMain.processEquationLine(line);
             log.debug("result = " + result);
         }
         while(!"".equals(line));

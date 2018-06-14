@@ -7,7 +7,7 @@ import java.util.Collection;
  */
 public interface Calculator {
 
-    Collection<VariableValue> processEquationLine(String line);
+    Collection<Variable> processEquationLine(String line);
 
     String getVariableStatus();
 

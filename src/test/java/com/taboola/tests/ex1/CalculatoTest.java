@@ -17,25 +17,25 @@ public class CalculatoTest {
     @Test
     public void testSimpleAssigment() {
         CalculatorImpl calculator = new CalculatorImpl();
-        Collection<VariableValue> result = calculator.processEquationLine("i=0");
+        Collection<Variable> result = calculator.processEquationLine("i=0");
 
         Assert.assertEquals("Only one variable is expected : i=0" , 1, result.size());
-        Assert.assertTrue("Only one variable is expected : i=0" , result.contains(new VariableValue("i", 0)));
+        Assert.assertTrue("Only one variable is expected : i=0" , result.contains(new VariableImpl("i", 0)));
 
     }
 
     @Test
     public void testDoubleAssigment() {
         CalculatorImpl calculator = new CalculatorImpl();
-        Collection<VariableValue> result = calculator.processEquationLine("i=0");
+        Collection<Variable> result = calculator.processEquationLine("i=0");
         Assert.assertEquals("Only one variable is expected : i=0" , 1, result.size());
-        Assert.assertTrue("Only one variable is expected : i=0" , result.contains(new VariableValue("i", 0)));
+        Assert.assertTrue("Only one variable is expected : i=0" , result.contains(new VariableImpl("i", 0)));
 
 
         result = calculator.processEquationLine("j=i++ + 4");
         Assert.assertEquals("Only TWO variables are expected : i=1 and j=4" , 2, result.size());
-        Assert.assertTrue("Expected i=1" , result.contains(new VariableValue("i", 1)));
-        Assert.assertTrue("Expected j=4" , result.contains(new VariableValue("j", 4)));
+        Assert.assertTrue("Expected i=1" , result.contains(new VariableImpl("i", 1)));
+        Assert.assertTrue("Expected j=4" , result.contains(new VariableImpl("j", 4)));
 
     }
 
@@ -52,7 +52,7 @@ public class CalculatoTest {
     @Test
     public void testTaboolaAssigment() {
         Calculator calculator = new CalculatorImpl();
-        Collection<VariableValue> result = calculator.processEquationLine("i=0");
+        Collection<Variable> result = calculator.processEquationLine("i=0");
 
         calculator.processEquationLine("j=++i");
         calculator.processEquationLine("x=i++ + 5");
@@ -60,10 +60,10 @@ public class CalculatoTest {
         result = calculator.processEquationLine("i+=y");
 
         Assert.assertEquals("i,j,x,y are expected (4 variables) " , 4, result.size());
-        Assert.assertTrue("i=37" , result.contains(new VariableValue("i", 37)));
-        Assert.assertTrue("j=1" , result.contains(new VariableValue("j", 1)));
-        Assert.assertTrue("expected  x=6" , result.contains(new VariableValue("x", 6)));
-        Assert.assertTrue("expected  y=35" , result.contains(new VariableValue("y", 35)));
+        Assert.assertTrue("i=37" , result.contains(new VariableImpl("i", 37)));
+        Assert.assertTrue("j=1" , result.contains(new VariableImpl("j", 1)));
+        Assert.assertTrue("expected  x=6" , result.contains(new VariableImpl("x", 6)));
+        Assert.assertTrue("expected  y=35" , result.contains(new VariableImpl("y", 35)));
 
         String resultAsStr = calculator.getVariableStatus();
         log.info(resultAsStr);
@@ -79,17 +79,17 @@ public class CalculatoTest {
     @Test
     public void testIntermediateResult() {
         Calculator calculator = new CalculatorImpl();
-        Collection<VariableValue> result = calculator.processEquationLine("i=5");
-        Assert.assertTrue(result.contains(new VariableValue("i", 5)));
+        Collection<Variable> result = calculator.processEquationLine("i=5");
+        Assert.assertTrue(result.contains(new VariableImpl("i", 5)));
 
         result = calculator.processEquationLine("j=i++ * 3");
-        Assert.assertTrue(result.contains(new VariableValue("i", 6)));
-        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
+        Assert.assertTrue(result.contains(new VariableImpl("i", 6)));
+        Assert.assertTrue(result.contains(new VariableImpl("j", 15)));
 
         result = calculator.processEquationLine("k=i++ - 3*j");
-        Assert.assertTrue(result.contains(new VariableValue("i", 7)));
-        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
-        Assert.assertTrue(result.contains(new VariableValue("k", -39)));
+        Assert.assertTrue(result.contains(new VariableImpl("i", 7)));
+        Assert.assertTrue(result.contains(new VariableImpl("j", 15)));
+        Assert.assertTrue(result.contains(new VariableImpl("k", -39)));
     }
 
 
@@ -103,16 +103,55 @@ public class CalculatoTest {
     @Test
     public void testMinusMinusOperation() {
         Calculator calculator = new CalculatorImpl();
-        Collection<VariableValue> result = calculator.processEquationLine("i=5");
-        Assert.assertTrue(result.contains(new VariableValue("i", 5)));
+        Collection<Variable> result = calculator.processEquationLine("i=5");
+        Assert.assertTrue(result.contains(new VariableImpl("i", 5)));
 
         result = calculator.processEquationLine("j=i-- * 3");
-        Assert.assertTrue(result.contains(new VariableValue("i", 4)));
-        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
+        Assert.assertTrue(result.contains(new VariableImpl("i", 4)));
+        Assert.assertTrue(result.contains(new VariableImpl("j", 15)));
 
         result = calculator.processEquationLine("k=--i - 3*j");
-        Assert.assertTrue(result.contains(new VariableValue("i", 3)));
-        Assert.assertTrue(result.contains(new VariableValue("j", 15)));
-        Assert.assertTrue(result.contains(new VariableValue("k", -42)));
+        Assert.assertTrue(result.contains(new VariableImpl("i", 3)));
+        Assert.assertTrue(result.contains(new VariableImpl("j", 15)));
+        Assert.assertTrue(result.contains(new VariableImpl("k", -42)));
     }
+
+    /**
+     * Check that our code support multiple occurence of same variable in the equation like here : <br/>
+     * i=5          ==> (i=5)       <br/>
+     * j=3*i+i      ==>  (i=5 , j=20) <br/>
+     */
+    @Test
+    public void testMultipleOccurenceOfVariable() {
+        Calculator calculator = new CalculatorImpl();
+        Collection<Variable> result = calculator.processEquationLine("i=5");
+        Assert.assertTrue(result.contains(new VariableImpl("i", 5)));
+
+        result = calculator.processEquationLine("j=i*3+i");
+        Assert.assertTrue(result.contains(new VariableImpl("i", 5)));
+        Assert.assertTrue(result.contains(new VariableImpl("j", 20)));
+    }
+
+
+    /**
+     * Check that we catch an IllegalArgumentException in case equation is not resolvable ... <br/>
+     * i=5              ==> i=5 <br/>
+     * j=i-- *3 + 2*k         ==> ERROR her : we cannot resolve that, since k is undefined at this stage <br/>
+
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidEquations() {
+        Calculator calculator = new CalculatorImpl();
+        Collection<Variable> result = calculator.processEquationLine("i=5");
+        Assert.assertTrue(result.contains(new VariableImpl("i", 5)));
+
+        // Here, we are supposed to get an Exception since the variable k on the right side of the equation has no value ...
+        result = calculator.processEquationLine("j=i-- * 3 + 2*k");
+
+    }
+
+
+
+
 }

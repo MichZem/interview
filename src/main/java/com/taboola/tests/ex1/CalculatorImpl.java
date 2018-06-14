@@ -29,11 +29,13 @@ public class CalculatorImpl implements Calculator {
 
     /**
      * Find variable (which are defined by "any series of char " <br/>
+     * This pattern is not perfect and catch also the digit but our code is ok with that <br/>
      *
      */
     final Pattern variablePattern = Pattern.compile("\\w+", Pattern.MULTILINE);
 
-    private HashMap<String, VariableValue> variableMap = new HashMap<String, VariableValue>();
+
+    private HashMap<String, Variable> variableMap = new HashMap<String, Variable>();
 
 
     /**
@@ -42,7 +44,7 @@ public class CalculatorImpl implements Calculator {
      * @param line of syntax like : k = 2*x + y*y - z++
      * @return Collection of VariableValue , like { i=5, j=10, k=44 }
      */
-    public Collection<VariableValue> processEquationLine(String line) {
+    public Collection<Variable> processEquationLine(String line) {
         String[] splitValues = line.split("=");
 
 
@@ -60,8 +62,6 @@ public class CalculatorImpl implements Calculator {
             rightSideOfLine = variableName + " i" + rightSideOfLine;
         }
 
-        VariableValue variableValue = new VariableValue(variableName);
-
 
         String lineAfterOperatorResolution = processOperatorInLine(rightSideOfLine);
 
@@ -71,8 +71,8 @@ public class CalculatorImpl implements Calculator {
 
         BigDecimal finalSum = SimpleCalc.calculateNumericValue(lineAfterOperatorResolution);
         log.debug("Final Sum of (" + line + ") = " + finalSum);
-        variableValue.setValue(finalSum.doubleValue());
-        variableMap.put(variableValue.getName(), variableValue);
+
+        variableMap.put(variableName, new VariableImpl(variableName, finalSum.doubleValue()));
 
         log.debug("Add intermediateResults : " + variableMap.values());
 
@@ -111,10 +111,11 @@ public class CalculatorImpl implements Calculator {
         Matcher matcher = variablePattern.matcher(line);
         while (matcher.find()) {
 
-            log.debug("Full match: " + matcher.group(0));
-            VariableValue variable = variableMap.get(matcher.group(0));
+            String variableName = matcher.group(0);
+            log.debug("Full match: " + variableName);
+            Variable variable = variableMap.get(variableName);
             if(variable != null) {
-                newLine = newLine.replace(matcher.group(), variable.getValue() + "");
+                newLine = newLine.replaceFirst(Pattern.quote(variableName), variable.getValue() + "");
             }
             log.debug("newLine = " + newLine);
         }
@@ -167,14 +168,14 @@ public class CalculatorImpl implements Calculator {
     private String executeOperator(String operatorDirective) {
         if(operatorDirective.endsWith("++")) {
             String variableName = operatorDirective.substring(0, operatorDirective.length()-2);
-            VariableValue variable = variableMap.get(variableName);
+            Variable variable = variableMap.get(variableName);
             String result = variable.getValue() + "";
             variable.incrementBy( 1);
             return result;
         }
         else  if(operatorDirective.startsWith("++")) {
             String variableName = operatorDirective.substring("++".length());
-            VariableValue variable = variableMap.get(variableName);
+            Variable variable = variableMap.get(variableName);
             if(variable == null) {
                 throw new IllegalArgumentException("variableName was not assigned yet. variableName " + variableName);
             }
@@ -184,14 +185,14 @@ public class CalculatorImpl implements Calculator {
         }
         else if(operatorDirective.endsWith("--")) {
             String variableName = operatorDirective.substring(0, operatorDirective.length()-2);
-            VariableValue variable = variableMap.get(variableName);
+            Variable variable = variableMap.get(variableName);
             String result = variable.getValue() + "";
             variable.decrementBy(1);
             return result;
         }
         else  if(operatorDirective.startsWith("--")) {
             String variableName = operatorDirective.substring("++".length());
-            VariableValue variable = variableMap.get(variableName);
+            Variable variable = variableMap.get(variableName);
             if(variable == null) {
                 throw new IllegalArgumentException("variableName was not assigned yet. variableName " + variableName);
             }
